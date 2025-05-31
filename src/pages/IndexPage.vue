@@ -3,17 +3,13 @@
     <div class="row justify-between items-center q-mb-md">
       <h2 class="q-ma-none">Agendamentos</h2>
 
-      <q-btn 
-        to="/usuario-agenda"
-        icon="event_available"
-        label="Meus Agendamentos"
-      />
+      <q-btn to="/usuario-agenda" icon="event_available" label="Meus Agendamentos" />
     </div>
 
     <div class="row q-mb-md">
       <div class="col-12 col-md-6">
-        <q-date 
-          v-model="selectedDate" 
+        <q-date
+          v-model="selectedDate"
           :options="dateOptions"
           today-btn
           label="Selecione a data"
@@ -21,27 +17,25 @@
         />
       </div>
     </div>
-    
+
     <div v-if="selectedDate">
       <h3>Horários disponíveis para {{ formattedDate }}</h3>
-      
+
       <div class="time-slots">
-        <q-card 
-          v-for="slot in availableSlots" 
+        <q-card
+          v-for="slot in availableSlots"
           :key="`${slot.period}-${slot.hour}`"
           class="q-mb-sm"
-          :class="{'bg-green-2': slot.available, 'bg-grey-3': !slot.available}"
+          :class="{ 'bg-green-2': slot.available, 'bg-grey-3': !slot.available }"
         >
           <q-card-section>
             <div class="row items-center">
-              <div class="col">
-                {{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})
-              </div>
+              <div class="col">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
               <div class="col-auto">
-                <q-btn 
+                <q-btn
                   v-if="slot.available"
-                  label="Reservar" 
-                  color="primary" 
+                  label="Reservar"
+                  color="primary"
                   @click="bookSlot(slot)"
                   :disable="!slot.available"
                 />
@@ -63,7 +57,7 @@ export default {
   data() {
     return {
       selectedDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
-      agendamentoStore: null
+      agendamentoStore: null,
     }
   },
   computed: {
@@ -72,7 +66,7 @@ export default {
     },
     availableSlots() {
       return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
-    }
+    },
   },
   methods: {
     dateOptions(d) {
@@ -85,19 +79,19 @@ export default {
         hour: slot.hour,
         period: slot.period,
         price: slot.price,
-        bookedAt: new Date().toISOString()
+        bookedAt: new Date().toISOString(),
       }
 
       this.agendamentoStore.addAgendamento(agendamento)
       this.$q.notify({
         type: 'positive',
-        message: 'Horário reservado com sucesso!'
+        message: 'Horário reservado com sucesso!',
       })
-    }
+    },
   },
   created() {
     this.agendamentoStore = useAgendamentoStore()
-  }
+  },
 }
 </script>
 

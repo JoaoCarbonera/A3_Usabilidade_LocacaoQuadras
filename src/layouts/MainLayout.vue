@@ -1,43 +1,53 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+  <q-layout class="bg-grey-1">
+    <q-header elevated class="text-white" style="background: #24292e">
+      <q-toolbar class="q-py-sm q-px-md">
+        <img src="public\icons\logobranco.png" style="height: 25px" />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+        <div
+          v-if="$q.screen.gt.sm"
+          class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"
+        >
+          <a href="javascript:void(0)" class="text-white"> Marcar Horario </a>
+          <a href="javascript:void(0)" class="text-white"> Quadras </a>
+          <a href="javascript:void(0)" class="text-white"> Sobre Nós </a>
+        </div>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space />
+
+        <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
+          <q-btn v-if="$q.screen.gt.xs" dense flat round size="sm" icon="notifications" />
+
+          <q-btn dense flat no-wrap>
+            <q-avatar rounded size="20px">
+              <img src="https://cdn.quasar.dev/img/avatar3.jpg" />
+            </q-avatar>
+            <q-icon name="arrow_drop_down" size="16px" />
+
+            <q-menu auto-close>
+              <q-list dense>
+                <q-item class="GL__menu-link-signed-in">
+                  <q-item-section>
+                    <div>Logado em <strong>Jorge</strong></div>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Seu Perfil</q-item-section>
+                </q-item>
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Meus Agendamentos</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Log out</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -46,72 +56,107 @@
 </template>
 
 <script>
-import { defineComponent} from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { ref } from 'vue'
+import { fabGithub } from '@quasar/extras/fontawesome-v6'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+const stringOptions = ['quasarframework/quasar', 'quasarframework/quasar-awesome']
 
-export default defineComponent({
-  name: 'MainLayout',
+export default {
+  name: 'MyLayout',
 
-  components: {
-    EssentialLink
-  },
+  setup() {
+    const text = ref('')
+    const options = ref(null)
+    const filteredOptions = ref([])
+    const search = ref(null) // $refs.search
 
-  data () {
+    function filter(val, update) {
+      if (options.value === null) {
+        // load data
+        setTimeout(() => {
+          options.value = stringOptions
+          search.value.filter('')
+        }, 2000)
+        update()
+        return
+      }
+
+      if (val === '') {
+        update(() => {
+          filteredOptions.value = options.value.map((op) => ({ label: op }))
+        })
+        return
+      }
+
+      update(() => {
+        filteredOptions.value = [
+          {
+            label: val,
+            type: 'In this repository',
+          },
+          {
+            label: val,
+            type: 'All GitHub',
+          },
+          ...options.value
+            .filter((op) => op.toLowerCase().includes(val.toLowerCase()))
+            .map((op) => ({ label: op })),
+        ]
+      })
+    }
+
     return {
-      linksList,
-      leftDrawerOpen: false
+      fabGithub,
+
+      text,
+      options,
+      filteredOptions,
+      search,
+
+      filter,
     }
   },
-
-  methods: {
-    toggleLeftDrawer () {
-      this.leftDrawerOpen = !this.leftDrawerOpen
-    }
-  }
-})
+}
 </script>
+
+<style lang="sass">
+.GL
+  &__select-GL__menu-link
+    .default-type
+      visibility: hidden
+
+    &:hover
+      background: #0366d6
+      color: white
+      .q-item__section--side
+        color: white
+      .default-type
+        visibility: visible
+
+  &__toolbar-link
+    a
+      color: white
+      text-decoration: none
+      &:hover
+        opacity: 0.7
+
+  &__menu-link:hover
+    background: #0366d6
+    color: white
+
+  &__menu-link-signed-in,
+  &__menu-link-status
+    &:hover
+      & > div
+        background: white !important
+
+  &__menu-link-status
+    color: $blue-grey-6
+    &:hover
+      color: $light-blue-9
+
+  &__toolbar-select.q-field--focused
+    width: 450px !important
+    .q-field__append
+      display: none
+</style>

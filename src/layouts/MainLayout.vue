@@ -36,7 +36,7 @@
                 <q-item clickable class="GL__menu-link">
                   <q-item-section>Seu Perfil</q-item-section>
                 </q-item>
-                <q-item clickable class="GL__menu-link">
+                <q-item to="/usuario-agenda" clickable class="GL__menu-link">
                   <q-item-section>Meus Agendamentos</q-item-section>
                 </q-item>
                 <q-separator />

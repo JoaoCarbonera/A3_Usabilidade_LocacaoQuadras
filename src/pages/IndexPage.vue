@@ -11,8 +11,6 @@
   <q-page class="q-pa-md">
     <div class="row justify-between items-center q-mb-md">
       <h2 class="q-ma-none">Agendamentos</h2>
-
-      <q-btn to="/usuario-agenda" icon="event_available" label="Meus Agendamentos" />
     </div>
 
     <div class="row q-mb-md">

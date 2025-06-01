@@ -10,6 +10,7 @@
         >
           <a href="javascript:void(0)" class="text-white"> Marcar Horario </a>
           <a href="javascript:void(0)" class="text-white"> Quadras </a>
+          <a href="javascript:void(0)" class="text-white"> Contato </a>
           <a href="javascript:void(0)" class="text-white"> Sobre Nós </a>
         </div>
 

@@ -8,10 +8,10 @@
           v-if="$q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"
         >
-          <a href="javascript:void(0)" class="text-white"> Marcar Horario </a>
-          <a href="javascript:void(0)" class="text-white"> Quadras </a>
-          <a href="javascript:void(0)" class="text-white"> Contato </a>
-          <a href="javascript:void(0)" class="text-white"> Sobre Nós </a>
+          <router-link to="/marcar-page" class="text-white">Marcar Horário</router-link>
+          <router-link to="/quadras-page" class="text-white">Quadras</router-link>
+          <router-link to="/contato-page" class="text-white">Contato</router-link>
+          <router-link to="/sobre-page" class="text-white">Sobre Nós</router-link>
         </div>
 
         <q-space />

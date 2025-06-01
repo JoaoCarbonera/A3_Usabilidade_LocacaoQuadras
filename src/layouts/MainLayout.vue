@@ -1,8 +1,8 @@
 <template>
   <q-layout class="bg-grey-1">
-    <q-header elevated class="text-white" style="background: #24292e">
+    <q-header elevated class="text-white" style="background: black">
       <q-toolbar class="q-py-sm q-px-md">
-        <img src="public\icons\logobranco.png" style="height: 25px" />
+        <img src="/icons/logobranco.png" style="height: 25px" />
 
         <div
           v-if="$q.screen.gt.sm"
@@ -16,11 +16,11 @@
         <q-space />
 
         <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
-          <q-btn v-if="$q.screen.gt.xs" dense flat round size="sm" icon="notifications" />
+          <q-btn v-if="$q.screen.gt.xs" dense flat round size="12px" icon="notifications" />
 
           <q-btn dense flat no-wrap>
-            <q-avatar rounded size="20px">
-              <img src="https://cdn.quasar.dev/img/avatar3.jpg" />
+            <q-avatar rounded size="25px">
+              <img src="/icons/person.png" />
             </q-avatar>
             <q-icon name="arrow_drop_down" size="16px" />
 

@@ -1,4 +1,13 @@
 <template>
+  <div>
+    <q-carousel animated v-model="slide" arrows navigation infinite height="600px">
+      <q-carousel-slide :name="1" img-src="/icons/SOCCER-10.jpg" />
+      <q-carousel-slide :name="2" img-src="/icons/SOCCER-11.jpg" />
+      <q-carousel-slide :name="3" img-src="/icons/SOCCER-12.jpg" />
+      <q-carousel-slide :name="4" img-src="/icons/SOCCER-6.jpg" />
+    </q-carousel>
+  </div>
+
   <q-page class="q-pa-md">
     <div class="row justify-between items-center q-mb-md">
       <h2 class="q-ma-none">Agendamentos</h2>
@@ -58,6 +67,7 @@ export default {
     return {
       selectedDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
       agendamentoStore: null,
+      slide: 1,
     }
   },
   computed: {

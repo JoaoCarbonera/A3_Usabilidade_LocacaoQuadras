@@ -8,6 +8,7 @@
           v-if="$q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"
         >
+          <router-link to="/index-page" class="text-white">Home</router-link>
           <router-link to="/marcar-page" class="text-white">Marcar Horário</router-link>
           <router-link to="/quadras-page" class="text-white">Quadras</router-link>
           <router-link to="/contato-page" class="text-white">Contato</router-link>

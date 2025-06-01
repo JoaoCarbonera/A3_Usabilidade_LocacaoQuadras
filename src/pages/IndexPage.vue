@@ -8,57 +8,55 @@
     </q-carousel>
   </div>
 
-  <q-page class="q-pa-md">
-    <div class="row justify-between items-center q-mb-md">
-      <h2 class="q-ma-none">Agendamentos</h2>
+  <!-- Seção: Estrutura Completa -->
+  <section class="q-pa-xl bg-grey-4">
+    <!-- Título da Seção -->
+    <div class="text-center q-mb-xl">
+      <h2 class="text-h4 text-lime-10 text-weight-bold">Jogo com cara de final de Copa do Mundo</h2>
+      <p class="text-subtitle1 text-grey-7">A Net é craque em qualidade</p>
     </div>
 
-    <div class="row q-mb-md">
-      <div class="col-12 col-md-6">
-        <q-date
-          v-model="selectedDate"
-          :options="dateOptions"
-          today-btn
-          label="Selecione a data"
-          class="q-mb-md"
-        />
-      </div>
-    </div>
+    <!-- Descrição da Estrutura -->
+    <q-card flat bordered class="q-pa-lg q-mx-auto text-center" style="max-width: 900px">
+      <q-card-section>
+        <p class="text-body1 q-mb-lg">
+          Duas quadras de <strong>Futebol 5</strong> e quatro de <strong>Futebol 7</strong>, além de
+          uma estrutura completa com:
+        </p>
 
-    <div v-if="selectedDate">
-      <h3>Horários disponíveis para {{ formattedDate }}</h3>
+        <!-- Grid com Ícones -->
+        <div class="row q-col-gutter-lg justify-center">
+          <!-- Churrasqueiras -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-icon name="outdoor_grill" size="48px" color="deep-orange-7" />
+            <div class="text-subtitle1 q-mt-sm">Churrasqueiras</div>
+          </div>
 
-      <div class="time-slots">
-        <q-card
-          v-for="slot in availableSlots"
-          :key="`${slot.period}-${slot.hour}`"
-          class="q-mb-sm"
-          :class="{ 'bg-green-2': slot.available, 'bg-grey-3': !slot.available }"
-        >
-          <q-card-section>
-            <div class="row items-center">
-              <div class="col">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
-              <div class="col-auto">
-                <q-btn
-                  v-if="slot.available"
-                  label="Reservar"
-                  color="primary"
-                  @click="bookSlot(slot)"
-                  :disable="!slot.available"
-                />
-                <q-badge v-else color="red">Reservado</q-badge>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-  </q-page>
+          <!-- Vestiários -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-icon name="shower" size="48px" color="indigo-7" />
+            <div class="text-subtitle1 q-mt-sm">Vestiários</div>
+          </div>
+
+          <!-- Estacionamento -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-icon name="directions_car" size="48px" color="blue-7" />
+            <div class="text-subtitle1 q-mt-sm">Estacionamento</div>
+          </div>
+
+          <!-- Espaço Gourmet -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-icon name="restaurant" size="48px" color="green-7" />
+            <div class="text-subtitle1 q-mt-sm">Espaço Gourmet</div>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </section>
 </template>
 
 <script>
 import { date } from 'quasar'
-import { useAgendamentoStore } from 'src/stores/agendamento'
 
 export default {
   data() {
@@ -68,43 +66,7 @@ export default {
       slide: 1,
     }
   },
-  computed: {
-    formattedDate() {
-      return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
-    },
-    availableSlots() {
-      return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
-    },
-  },
-  methods: {
-    dateOptions(d) {
-      return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
-    },
-    bookSlot(slot) {
-      const agendamento = {
-        id: Date.now(),
-        date: this.selectedDate,
-        hour: slot.hour,
-        period: slot.period,
-        price: slot.price,
-        bookedAt: new Date().toISOString(),
-      }
-
-      this.agendamentoStore.addAgendamento(agendamento)
-      this.$q.notify({
-        type: 'positive',
-        message: 'Horário reservado com sucesso!',
-      })
-    },
-  },
-  created() {
-    this.agendamentoStore = useAgendamentoStore()
-  },
 }
 </script>
 
-<style scoped>
-.time-slots {
-  max-width: 500px;
-}
-</style>
+<style></style>

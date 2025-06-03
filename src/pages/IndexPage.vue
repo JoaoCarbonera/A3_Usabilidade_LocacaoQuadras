@@ -1,110 +1,52 @@
 <template>
-  <div>
+<q-page class="flex flex-center column">
+  <div style="width: 100%;">
     <q-carousel animated v-model="slide" arrows navigation infinite height="600px">
-      <q-carousel-slide :name="1" img-src="/icons/SOCCER-10.jpg" />
-      <q-carousel-slide :name="2" img-src="/icons/SOCCER-11.jpg" />
-      <q-carousel-slide :name="3" img-src="/icons/SOCCER-12.jpg" />
-      <q-carousel-slide :name="4" img-src="/icons/SOCCER-6.jpg" />
+      <q-carousel-slide :name="1" img-src="/public/icons/SOCCER-10.jpg" />
+      <q-carousel-slide :name="2" img-src="/public/icons/SOCCER-11.jpg" />
+      <q-carousel-slide :name="3" img-src="/public/icons/SOCCER-12.jpg" />
+      <q-carousel-slide :name="4" img-src="/public/icons/SOCCER-6.jpg" />
     </q-carousel>
   </div>
 
-  <q-page class="q-pa-md">
-    <div class="row justify-between items-center q-mb-md">
-      <h2 class="q-ma-none">Agendamentos</h2>
-    </div>
+  <div class="container text-center">
+    <q-btn
+      label="Marcar Jogo"
+      color="primary"
+      icon="sports_soccer"
+      size="lg"
+      @click="showMarcar = true"
+      />
 
-    <div class="row q-mb-md">
-      <div class="col-12 col-md-6">
-        <q-date
-          v-model="selectedDate"
-          :options="dateOptions"
-          today-btn
-          label="Selecione a data"
-          class="q-mb-md"
-        />
-      </div>
-    </div>
-
-    <div v-if="selectedDate">
-      <h3>Horários disponíveis para {{ formattedDate }}</h3>
-
-      <div class="time-slots">
-        <q-card
-          v-for="slot in availableSlots"
-          :key="`${slot.period}-${slot.hour}`"
-          class="q-mb-sm"
-          :class="{ 'bg-green-2': slot.available, 'bg-grey-3': !slot.available }"
-        >
-          <q-card-section>
-            <div class="row items-center">
-              <div class="col">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
-              <div class="col-auto">
-                <q-btn
-                  v-if="slot.available"
-                  label="Reservar"
-                  color="primary"
-                  @click="bookSlot(slot)"
-                  :disable="!slot.available"
-                />
-                <q-badge v-else color="red">Reservado</q-badge>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-  </q-page>
+    <q-dialog v-model="showMarcar" persistent>
+      <MarcaJogo @close="showMarcar = false" />
+    </q-dialog>
+  </div>
+  
+</q-page>
 </template>
 
 <script>
-import { date } from 'quasar'
-import { useAgendamentoStore } from 'src/stores/agendamento'
+import MarcaJogo from 'src/components/MarcaJogo.vue'
 
 export default {
+  name: 'IndexPage',
+  components: {
+    MarcaJogo,
+  },
   data() {
     return {
-      selectedDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
-      agendamentoStore: null,
       slide: 1,
+      showMarcar: false,
+      maximizedToggle: false,
     }
-  },
-  computed: {
-    formattedDate() {
-      return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
-    },
-    availableSlots() {
-      return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
-    },
-  },
-  methods: {
-    dateOptions(d) {
-      return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
-    },
-    bookSlot(slot) {
-      const agendamento = {
-        id: Date.now(),
-        date: this.selectedDate,
-        hour: slot.hour,
-        period: slot.period,
-        price: slot.price,
-        bookedAt: new Date().toISOString(),
-      }
-
-      this.agendamentoStore.addAgendamento(agendamento)
-      this.$q.notify({
-        type: 'positive',
-        message: 'Horário reservado com sucesso!',
-      })
-    },
-  },
-  created() {
-    this.agendamentoStore = useAgendamentoStore()
   },
 }
 </script>
 
 <style scoped>
-.time-slots {
+.container {
   max-width: 500px;
+  padding: 20px;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <q-layout class="bg-grey-1">
     <q-header elevated class="text-white" style="background: black"  >
-      <q-toolbar class="q-py-sm q-px-md">
-         <router-link to="/"><img src="/icons/logobranco.png" style="height: 25px" /></router-link>
-
+      <q-toolbar class="q-py-sm q-px-md items-center">
+         <router-link to="/" class="flex items-center"><img src="/icons/logobranco.png" style="height: 25px" /></router-link>
+        
         <div
           v-if="$q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"

@@ -11,7 +11,7 @@
   <!-- Seção: Estrutura Completa -->
   
     
-    <div class="q-pa-xl flex flex-center bg-grey-4" style="height: 10vh;">
+    <div class="q-pa-xl flex flex-center bg-grey-2" style="height: 10vh;">
       <q-btn
         label="Marcar Jogo"
         color="primary"
@@ -26,7 +26,7 @@
       </q-dialog>
     </div>
     
-  <section class="q-pa-xl bg-grey-4">
+  <section class="q-pa-xl bg-grey-2">
     <div class="text-center q-mb-xl">
       <h2 class="text-h4 text-lime-10 text-weight-bold">Jogo com cara de final de Copa do Mundo</h2>
       <p class="text-subtitle1 text-grey-7">A Net é craque em qualidade</p>

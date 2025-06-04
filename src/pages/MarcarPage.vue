@@ -45,6 +45,11 @@
       </div>
     </div>
   </q-page>
+
+  <q-footer class="bg-black text-white text-center q-pa-sm">
+      © 2025 - Net Quadras
+    </q-footer>
+    
 </template>
 
 <script>

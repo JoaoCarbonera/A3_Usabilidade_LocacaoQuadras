@@ -1,13 +1,15 @@
 <template>
   <q-layout class="bg-grey-1">
-    <q-header elevated class="text-white" style="background: black"  >
+    <q-header elevated class="text-white" style="background: black">
       <q-toolbar class="q-py-sm q-px-md items-center">
-         <router-link to="/" class="flex items-center"><img src="/icons/logobranco.png" style="height: 28px" /></router-link>
+        <router-link to="/" class="flex items-center">
+          <img src="/icons/logobranco.png" style="height: 28px" />
+        </router-link>
+
         
         <div
           v-if="$q.screen.gt.sm"
-          class="GL__toolbar-link q-ml-xs q-gutter-md text-subtitle2 text-weight-bolder row items-center no-wrap"
-        >
+          class="GL__toolbar-link q-ml-xs q-gutter-md text-subtitle2 text-weight-bolder row items-center no-wrap">
           <router-link to="/marcar-page" class="text-white">Marcar Horário</router-link>
           <router-link to="/quadras-page" class="text-white">Quadras</router-link>
           <router-link to="/contato-page" class="text-white">Contato</router-link>
@@ -16,15 +18,15 @@
 
         <q-space />
 
+        
         <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
           <q-btn v-if="$q.screen.gt.xs" dense flat round size="12px" icon="notifications" />
-
+          
           <q-btn dense flat no-wrap>
             <q-avatar rounded size="25px">
               <img src="/icons/person.png" />
             </q-avatar>
             <q-icon name="arrow_drop_down" size="16px" />
-
             <q-menu auto-close>
               <q-list dense>
                 <q-item class="GL__menu-link-signed-in">
@@ -46,10 +48,43 @@
               </q-list>
             </q-menu>
           </q-btn>
+
+          <!-- MENU MOBILE: HAMBURGER -->
+          <q-btn
+            dense flat round icon="menu"
+            class="q-ml-sm"
+            v-if="$q.screen.lt.md"
+            @click="drawer = !drawer"
+          />
         </div>
       </q-toolbar>
     </q-header>
 
+    <!-- DRAWER MOBILE -->
+    <q-drawer
+      v-model="drawer"
+      side="right"
+      overlay
+      behavior="mobile"
+      class="bg-grey-10 text-white"
+    >
+      <q-list>
+        <q-item clickable to="/marcar-page">
+          <q-item-section>Marcar Horário</q-item-section>
+        </q-item>
+        <q-item clickable to="/quadras-page">
+          <q-item-section>Quadras</q-item-section>
+        </q-item>
+        <q-item clickable to="/contato-page">
+          <q-item-section>Contato</q-item-section>
+        </q-item>
+        <q-item clickable to="/sobre-page">
+          <q-item-section>Sobre Nós</q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
+
+  
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -58,65 +93,15 @@
 
 <script>
 import { ref } from 'vue'
-import { fabGithub } from '@quasar/extras/fontawesome-v6'
-
-const stringOptions = ['quasarframework/quasar', 'quasarframework/quasar-awesome']
 
 export default {
   name: 'MyLayout',
-
   setup() {
-    const text = ref('')
-    const options = ref(null)
-    const filteredOptions = ref([])
-    const search = ref(null) // $refs.search
-
-    function filter(val, update) {
-      if (options.value === null) {
-        // load data
-        setTimeout(() => {
-          options.value = stringOptions
-          search.value.filter('')
-        }, 2000)
-        update()
-        return
-      }
-
-      if (val === '') {
-        update(() => {
-          filteredOptions.value = options.value.map((op) => ({ label: op }))
-        })
-        return
-      }
-
-      update(() => {
-        filteredOptions.value = [
-          {
-            label: val,
-            type: 'In this repository',
-          },
-          {
-            label: val,
-            type: 'All GitHub',
-          },
-          ...options.value
-            .filter((op) => op.toLowerCase().includes(val.toLowerCase()))
-            .map((op) => ({ label: op })),
-        ]
-      })
-    }
-
+    const drawer = ref(false)
     return {
-      fabGithub,
-
-      text,
-      options,
-      filteredOptions,
-      search,
-
-      filter,
+      drawer
     }
-  },
+  }
 }
 </script>
 

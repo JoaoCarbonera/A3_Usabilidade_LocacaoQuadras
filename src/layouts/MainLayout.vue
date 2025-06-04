@@ -1,6 +1,6 @@
 <template>
   <q-layout class="bg-grey-1">
-    <q-header elevated class="text-white" style="background: black">
+    <q-header elevated class="text-white" style="background: black"  >
       <q-toolbar class="q-py-sm q-px-md">
         <img src="/icons/logobranco.png" style="height: 25px" />
 

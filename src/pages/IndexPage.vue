@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-carousel animated v-model="slide" arrows navigation infinite height="600px">
+    <q-carousel animated v-model="slide" arrows navigation infinite height="870px">
       <q-carousel-slide :name="1" img-src="/icons/SOCCER-10.jpg" />
       <q-carousel-slide :name="2" img-src="/icons/SOCCER-11.jpg" />
       <q-carousel-slide :name="3" img-src="/icons/SOCCER-12.jpg" />
@@ -9,8 +9,24 @@
   </div>
 
   <!-- Seção: Estrutura Completa -->
+  
+    
+    <div class="q-pa-xl flex flex-center bg-grey-4" style="height: 10vh;">
+      <q-btn
+        label="Marcar Jogo"
+        color="primary"
+        icon="sports_soccer"
+        size="lg"
+        class="q-px-xl q-py-lg text-h6"
+        @click="showMarcar = true"
+      />
+
+      <q-dialog v-model="showMarcar" persistent>
+        <MarcaJogo @close="showMarcar = false" />
+      </q-dialog>
+    </div>
+    
   <section class="q-pa-xl bg-grey-4">
-    <!-- Título da Seção -->
     <div class="text-center q-mb-xl">
       <h2 class="text-h4 text-lime-10 text-weight-bold">Jogo com cara de final de Copa do Mundo</h2>
       <p class="text-subtitle1 text-grey-7">A Net é craque em qualidade</p>
@@ -56,17 +72,26 @@
 </template>
 
 <script>
-import { date } from 'quasar'
+import MarcaJogo from 'src/components/MarcaJogo.vue'
 
 export default {
+  name: 'IndexPage',
+  components: {
+    MarcaJogo,
+  },
   data() {
     return {
-      selectedDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
-      agendamentoStore: null,
       slide: 1,
+      showMarcar: false,
+      maximizedToggle: false,
     }
   },
 }
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  max-width: 500px;
+  padding: 15px;
+}
+</style>

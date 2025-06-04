@@ -2,11 +2,11 @@
   <q-layout class="bg-grey-1">
     <q-header elevated class="text-white" style="background: black"  >
       <q-toolbar class="q-py-sm q-px-md items-center">
-         <router-link to="/" class="flex items-center"><img src="/icons/logobranco.png" style="height: 25px" /></router-link>
+         <router-link to="/" class="flex items-center"><img src="/icons/logobranco.png" style="height: 28px" /></router-link>
         
         <div
           v-if="$q.screen.gt.sm"
-          class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"
+          class="GL__toolbar-link q-ml-xs q-gutter-md text-subtitle2 text-weight-bolder row items-center no-wrap"
         >
           <router-link to="/marcar-page" class="text-white">Marcar Horário</router-link>
           <router-link to="/quadras-page" class="text-white">Quadras</router-link>

@@ -49,7 +49,7 @@
             </q-menu>
           </q-btn>
 
-          <!-- MENU MOBILE: HAMBURGER -->
+          <!-- MENU MOBILE -->
           <q-btn
             dense flat round icon="menu"
             class="q-ml-sm"
@@ -59,8 +59,7 @@
         </div>
       </q-toolbar>
     </q-header>
-
-    <!-- DRAWER MOBILE -->
+    
     <q-drawer
       v-model="drawer"
       side="right"

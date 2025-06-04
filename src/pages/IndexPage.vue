@@ -3,8 +3,8 @@
     <q-carousel animated v-model="slide" arrows navigation infinite height="870px">
       <q-carousel-slide :name="1" img-src="/icons/SOCCER-10.jpg" />
       <q-carousel-slide :name="2" img-src="/icons/SOCCER-11.jpg" />
-      <q-carousel-slide :name="3" img-src="/icons/SOCCER-12.jpg" />
-      <q-carousel-slide :name="4" img-src="/icons/SOCCER-6.jpg" />
+      <q-carousel-slide :name="3" img-src="/icons/SCITY-1304.jpg" />
+      <q-carousel-slide :name="4" img-src="/icons/SCITY-1428.jpg" />
     </q-carousel>
   </div>
 

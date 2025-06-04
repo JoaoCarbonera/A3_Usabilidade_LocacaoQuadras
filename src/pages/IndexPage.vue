@@ -16,7 +16,7 @@
         label="Marcar Jogo"
         color="primary"
         icon="sports_soccer"
-        size="lg"
+        style="font-size: 24px; padding: 15px 30px; min-width: 200px;"
         class="q-px-xl q-py-lg text-h6"
         @click="showMarcar = true"
       />
@@ -69,6 +69,15 @@
       </q-card-section>
     </q-card>
   </section>
+
+  <section>
+    
+  </section>
+
+  <q-footer class="bg-black text-white text-center q-pa-sm">
+      © 2025 - Net Quadras
+    </q-footer>
+
 </template>
 
 <script>

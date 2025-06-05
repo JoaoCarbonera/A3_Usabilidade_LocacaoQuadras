@@ -1,11 +1,11 @@
 <template>
   
 
-  <q-page class="flex flex-center q-pa-md column items-center">
+  <q-page class="flex flex-center q-pa-sm column items-center">
 
-    <img src="/icons/logo2.png" style="height: 45px; margin-bottom: 16px;" />
+    <img src="/icons/logo2.png" style="height: 40px; margin-bottom: 16px;" />
     
-    <q-card class="mycard q-pa-md" style="max-width: 400px; width: 100%;">
+    <q-card class="q-pa-md" style="max-width: 400px; width: 100%;">
   <div class="q-pa-md" style="max-width: 400px">
 
     <q-form

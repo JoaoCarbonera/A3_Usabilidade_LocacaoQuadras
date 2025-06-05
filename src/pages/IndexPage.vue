@@ -11,7 +11,7 @@
   <!-- Seção: Estrutura Completa -->
   
     
-    <div class="q-pa-xl flex flex-center bg-grey-2" style="height: 10vh;">
+    <div class="q-pa-xl flex flex-center bg-grey-2" style="height: 50px;">
       <q-btn
         label="Marcar Jogo"
         color="primary"
@@ -21,7 +21,7 @@
         @click="showMarcar = true"
       />
 
-      <q-dialog v-model="showMarcar" persistent>
+      <q-dialog v-model="showMarcar" backdrop-filter="blur(4px)" transition-show="slide-up" transition-hide="slide-down">
         <MarcaJogo @close="showMarcar = false" />
       </q-dialog>
     </div>

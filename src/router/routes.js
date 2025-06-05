@@ -9,7 +9,6 @@ const routes = [
       { path: '/quadras-page', component: () => import('pages/QuadrasPage.vue') },
       { path: '/contato-page', component: () => import('pages/ContatoPage.vue') },
       { path: '/sobre-page', component: () => import('pages/SobrePage.vue') },
-      { path: '/marcar-page', component: () => import('pages/MarcarPage.vue') },
     ],
   },
 

@@ -1,58 +1,55 @@
 <template>
-<q-card style="width: 100%; max-width: 1920px;">
-    <div class="agendamento-container">
-    <q-btn 
-      label="Voltar" 
-      icon="arrow_back" 
-      flat 
-      @click="$emit('close')" 
-      class="q-mb-md"
-    />
-
-    <div class="row justify-between items-center q-mb-md">
-      <h2 class="q-ma-none">Agendamentos</h2>
-    </div>
-
-    <div class="row q-mb-md">
-      <div class="col-12 col-md-6">
-        <q-date
-          v-model="selectedDate"
-          :options="dateOptions"
-          today-btn
-          label="Selecione a data"
-          class="q-mb-md"
-        />
-      </div>
-    </div>
-    <div v-if="selectedDate">
-      <h3>Horários disponíveis para {{ formattedDate }}</h3>
-
+<q-card class="mycard">
+<q-btn 
+    label="Voltar" 
+    icon="arrow_back" 
+    flat 
+    @click="$emit('close')" 
+    class="q-mb-md"
+/>
+<div class="agendamento-container">
+  <div class="row q-col-gutter-md items-center ">
+    <div class="col-12 col-md-6">
+      <h2 class="q-mb-3 titulo">Agendamentos</h2>
+      <q-date
+        v-model="selectedDate"
+        flat
+        :options="dateOptions"
+        today-btn
+        label="Selecione a data"
+        class="q-mb-md bg-black text-white"
+      />
+    </div>    
+    <div v-if="selectedDate" class="col-12 col-md-6">
+      <h3 class="titulo q-mt-none">Horários disponíveis para {{ formata }}</h3>
       <div class="horarios">
         <q-card
-          v-for="slot in availableSlots"
+          v-for="slot in horariosDisponiveis"
+          flat
           :key="`${slot.period}-${slot.hour}`"
-          class="q-mb-sm"
-          :class="{ 'bg-green-2': slot.available, 'bg-grey-3': !slot.available }"
+          class="q-mb-sm text-white horario-cartao"
+          :class="{ 'bg-black': slot.available, 'bg-primary': !slot.available }"
         >
         <q-card-section>
-            <div class="row items-center">
-              <div class="col">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
-                <div class="col-auto">
-                    <q-btn
-                    v-if="slot.available"
-                    label="Reservar"
-                    color="primary"
-                    @click="bookSlot(slot)"
-                    :disable="!slot.available"
-                    />
-                <q-badge v-else color="red">Reservado</q-badge>
+            <div class="row items-center q-m-sm">
+              <div class="col-sm-5">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
+              <div class="col-sm-7 text-right info">
+                  <q-btn
+                  v-if="slot.available"
+                  label="Reservar"
+                  color="primary"
+                  @click="bookSlot(slot)"
+                  :disable="!slot.available"
+                  />
+                <q-badge v-else color="black">Reservado</q-badge>
               </div>
             </div>
-          </q-card-section>
+        </q-card-section>
         </q-card>
       </div>
     </div>
-    </div>
+  </div>
+</div>
 </q-card>
 </template>
 
@@ -63,16 +60,15 @@ import { useAgendamentoStore } from 'src/stores/agendamento'
 export default {
   data() {
     return {
-      selectedDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
+      selectedDate: null,
       agendamentoStore: null,
-      slide: 1,
     }
   },
   computed: {
-    formattedDate() {
+    formata() {
       return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
     },
-    availableSlots() {
+    horariosDisponiveis() {
       return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
     },
   },
@@ -93,6 +89,7 @@ export default {
       this.agendamentoStore.addAgendamento(agendamento)
       this.$q.notify({
         type: 'positive',
+        color: 'primary',
         message: 'Horário reservado com sucesso!',
       })
     },
@@ -104,11 +101,48 @@ export default {
 </script>
 
 <style scoped>
-.agendamentos {
-  max-width: 800px;
-  margin: auto;
+.mycard {
+  width: 100%; 
+  height: 800px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px;
 }
+
+.agendamento-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.titulo {
+  font-size: 48px;
+  font-weight: bolder;
+}
+
 .horarios {
-  max-width: 500px;
+  width: 100%;
+  align-items: center;
 }
+
+@media (max-width: 600px) {
+  .mycard {
+    max-width: 98vw;
+    padding: 20px;
+  }
+
+  .titulo {
+    font-size: 24px;
+  }
+
+  .horarios {
+    width: 100%;
+    text-align: right;
+  }
+  
+  .info {
+    margin: auto 0 auto auto;
+  }
+
+}
+
 </style>

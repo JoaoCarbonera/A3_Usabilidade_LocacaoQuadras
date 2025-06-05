@@ -10,7 +10,7 @@
         <div
           v-if="$q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-subtitle2 text-weight-bolder row items-center no-wrap">
-          <router-link to="/marcar-page" class="text-white">Marcar Horário</router-link>
+          <router-link to="/" class="text-white">Marcar Horário</router-link>
           <router-link to="/quadras-page" class="text-white">Quadras</router-link>
           <router-link to="/contato-page" class="text-white">Contato</router-link>
           <router-link to="/sobre-page" class="text-white">Sobre Nós</router-link>

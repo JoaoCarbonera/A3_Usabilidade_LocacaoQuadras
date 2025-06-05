@@ -1,6 +1,6 @@
 <template>
 <q-page class="q-pa-md">
-    <h2>Meus Agendamentos</h2>
+    <h2 class="text-weight-bolder">Meus Agendamentos</h2>
 
     <q-list bordered separator v-if="agendamentos.length">
       <q-item v-for="agendamento in agendamentos" :key="agendamento.id">

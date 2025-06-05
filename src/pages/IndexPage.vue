@@ -6,25 +6,21 @@
       <q-carousel-slide :name="3" img-src="/icons/SCITY-1304.jpg" />
       <q-carousel-slide :name="4" img-src="/icons/SCITY-1428.jpg" />
     </q-carousel>
+  </div>   
+  <div class="q-pa-xl flex flex-center bg-grey-2" style="height: 50px;">
+    <q-btn
+      label="Marcar Jogo"
+      color="primary"
+      icon="sports_soccer"
+      style="font-size: 24px; padding: 15px 30px; min-width: 200px;"
+      class="q-px-xl q-py-lg text-h6"
+      @click="showMarcar = true"
+    />
+
+    <q-dialog v-model="showMarcar" backdrop-filter="blur(4px)" transition-show="slide-up" transition-hide="slide-down">
+      <MarcaJogo @close="showMarcar = false" />
+    </q-dialog>
   </div>
-
-  <!-- Seção: Estrutura Completa -->
-  
-    
-    <div class="q-pa-xl flex flex-center bg-grey-2" style="height: 50px;">
-      <q-btn
-        label="Marcar Jogo"
-        color="primary"
-        icon="sports_soccer"
-        style="font-size: 24px; padding: 15px 30px; min-width: 200px;"
-        class="q-px-xl q-py-lg text-h6"
-        @click="showMarcar = true"
-      />
-
-      <q-dialog v-model="showMarcar" backdrop-filter="blur(4px)" transition-show="slide-up" transition-hide="slide-down">
-        <MarcaJogo @close="showMarcar = false" />
-      </q-dialog>
-    </div>
     
   <section class="q-pa-xl bg-grey-2">
     <div class="text-center q-mb-xl">
@@ -98,9 +94,5 @@ export default {
 }
 </script>
 
-<style scoped>
-.container {
-  max-width: 500px;
-  padding: 15px;
-}
+<style>
 </style>

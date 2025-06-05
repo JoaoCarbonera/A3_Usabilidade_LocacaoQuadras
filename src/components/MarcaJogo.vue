@@ -1,5 +1,5 @@
 <template>
-<q-card class="mycard">
+<q-card class="cartao">
 <q-btn 
     label="Voltar" 
     icon="arrow_back" 
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-.mycard {
+.cartao {
   width: 100%; 
   height: 800px;
   max-width: 1200px;

@@ -1,57 +1,55 @@
 <template>
 <q-card class="mycard">
-  <div class="agendamento-container">
-    <q-btn 
-      label="Voltar" 
-      icon="arrow_back" 
-      flat 
-      @click="$emit('close')" 
-      class="q-mb-md"
-    />
-    
-    <div class="row q-col-gutter-md items-center ">
-      <div class="col-12 col-md-6">
-        <h2 class="q-mb-3 titulo">Agendamentos</h2>
-        <q-date
-          v-model="selectedDate"
+<q-btn 
+    label="Voltar" 
+    icon="arrow_back" 
+    flat 
+    @click="$emit('close')" 
+    class="q-mb-md"
+/>
+<div class="agendamento-container">
+  <div class="row q-col-gutter-md items-center ">
+    <div class="col-12 col-md-6">
+      <h2 class="q-mb-3 titulo">Agendamentos</h2>
+      <q-date
+        v-model="selectedDate"
+        flat
+        :options="dateOptions"
+        today-btn
+        label="Selecione a data"
+        class="q-mb-md bg-black text-white"
+      />
+    </div>    
+    <div v-if="selectedDate" class="col-12 col-md-6">
+      <h3 class="titulo q-mt-none">Horários disponíveis para {{ formata }}</h3>
+      <div class="horarios">
+        <q-card
+          v-for="slot in horariosDisponiveis"
           flat
-          :options="dateOptions"
-          today-btn
-          label="Selecione a data"
-          class="q-mb-md bg-black text-white"
-        />
-      </div>
-    
-      <div v-if="selectedDate" class="col-12 col-md-6">
-        <h3 class="titulo q-mt-none">Horários disponíveis para {{ formata }}</h3>
-        <div class="horarios">
-          <q-card
-            v-for="slot in horariosDisponiveis"
-            flat
-            :key="`${slot.period}-${slot.hour}`"
-            class="q-mb-sm text-white horario-cartao"
-            :class="{ 'bg-black': slot.available, 'bg-primary': !slot.available }"
-          >
-          <q-card-section>
-              <div class="row items-center q-m-sm">
-                <div class="col-sm-5">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
-                <div class="col-sm-7 text-right">
-                    <q-btn
-                    v-if="slot.available"
-                    label="Reservar"
-                    color="primary"
-                    @click="bookSlot(slot)"
-                    :disable="!slot.available"
-                    />
-                  <q-badge v-else color="black">Reservado</q-badge>
-                </div>
+          :key="`${slot.period}-${slot.hour}`"
+          class="q-mb-sm text-white horario-cartao"
+          :class="{ 'bg-black': slot.available, 'bg-primary': !slot.available }"
+        >
+        <q-card-section>
+            <div class="row items-center q-m-sm">
+              <div class="col-sm-5">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
+              <div class="col-sm-7 text-right info">
+                  <q-btn
+                  v-if="slot.available"
+                  label="Reservar"
+                  color="primary"
+                  @click="bookSlot(slot)"
+                  :disable="!slot.available"
+                  />
+                <q-badge v-else color="black">Reservado</q-badge>
               </div>
-          </q-card-section>
-          </q-card>
-        </div>
+            </div>
+        </q-card-section>
+        </q-card>
       </div>
     </div>
   </div>
+</div>
 </q-card>
 </template>
 
@@ -91,6 +89,7 @@ export default {
       this.agendamentoStore.addAgendamento(agendamento)
       this.$q.notify({
         type: 'positive',
+        color: 'primary',
         message: 'Horário reservado com sucesso!',
       })
     },
@@ -138,6 +137,10 @@ export default {
   .horarios {
     width: 100%;
     text-align: right;
+  }
+  
+  .info {
+    margin: auto 0 auto auto;
   }
 
 }

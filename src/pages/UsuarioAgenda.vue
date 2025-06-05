@@ -51,6 +51,7 @@ export default {
       this.agendamentoStore.removeAgendamento(id)
       this.$q.notify({
         type: 'positive',
+        color: 'primary',
         message: 'Reserva cancelada com sucesso!'
       })
     }

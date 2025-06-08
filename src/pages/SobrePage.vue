@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center q-pa-md">
-    <q-card class="mycard q-pa-md" style="max-width: 600px; width: 100%;">
+    <q-card class="q-pa-md" style="max-width: 600px; width: 100%;">
       <q-card-section>
         <div class="text-h5 text-center text-primary q-mb-md">Bem-vindo à Net Quadras!</div>
         <p class="text-subtitle1 text-grey-7">

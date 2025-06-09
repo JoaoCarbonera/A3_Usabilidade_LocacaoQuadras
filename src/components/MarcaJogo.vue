@@ -35,7 +35,7 @@
               <div class="col-sm-5">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
               <div class="col-sm-7 text-right info">
                   <q-btn
-                  v-if="slot.available"
+                  v-if="userStore.isLogado"
                   label="Reservar"
                   color="primary"
                   @click="bookSlot(slot)"

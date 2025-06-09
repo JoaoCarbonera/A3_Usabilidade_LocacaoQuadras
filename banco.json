@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "jorge",
+      "password": "123",
+      "name": "Jorge"
+    },
+    {
+      "id": 2,
+      "username": "ana",
+      "password": "456",
+      "name": "Ana"
+    }
+  ],
+  "agendamentos": [
+    {
+      "id": 1,
+      "userId": 1,
+      "date": "2025/06/15",
+      "hour": 19,
+      "period": "noite",
+      "price": 180,
+      "bookedAt": "2025-06-07T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "date": "2025/06/16",
+      "hour": 15,
+      "period": "tarde",
+      "price": 160,
+      "bookedAt": "2025-06-08T11:30:00.000Z"
+    }
+  ]
+}

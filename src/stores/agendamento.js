@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
-import { LocalStorage } from 'quasar'
+import { useUsuarioStore } from './usuario'
+import axios from 'axios'
 
 
 export const useAgendamentoStore = defineStore('agendamento', {
   // Define o estado inicial do store
   state: () => ({
 
-    // Busca no LocalStorage por agendamentos salvos ou inicia com um array vazio
-    agendamentos: LocalStorage.getItem('agendamentos') || [],
+    agendamentos: [],
 
     // Define os horários disponíveis para agendamento
     horarios: {
@@ -18,23 +18,64 @@ export const useAgendamentoStore = defineStore('agendamento', {
   }),
 
   actions: {
+    async fetchAgendamentos() {
+      const userStore = useUsuarioStore()
+      if (!userStore.isLogado) {
+        this.agendamentos = []
+        return
+      }
+      try {
+        const response = await axios.get(`http://localhost:3001/agendamentos?userId=${userStore.user.id}`)
+        this.agendamentos = response.data
+      } catch (error) {
+        console.error('Erro ao buscar agendamentos:', error)
+      }
+    },
+  
     // Método para adicionar um agendamento
-    addAgendamento(agendamento) {
-      this.agendamentos.push(agendamento)
-      this.saveToLocalStorage()
+    async addAgendamento(agendamento) {
+      const userStore = useUsuarioStore()
+
+      if (!userStore.isLogado) return;
+
+      const newAgendamento = { ...agendamento, userId: userStore.user.id }
+      try {
+        const response = await axios.post('http://localhost:3001/agendamentos', newAgendamento)
+        this.agendamentos.push(response.data)
+        
+      } catch (error) {
+        console.error('Erro ao adicionar agendamento:', error)
+
+      }
     },
+
     // Método para atualizar um agendamento
-    removeAgendamento(agendamentoId) {
-      this.agendamentos = this.agendamentos.filter(a => a.id !== agendamentoId)
-      this.saveToLocalStorage()
+    async removeAgendamento(agendamentoId) {
+      
+      try {
+        await axios.delete(`http://localhost:3001/agendamentos/${agendamentoId}`)
+
+        this.agendamentos = this.agendamentos.filter(a => a.id !== agendamentoId)
+
+      } catch (error) {
+        console.error('Erro ao cancelar agendamento:', error)
+
+      }
     },
+    
     // Método para buscar agendamentos por data
-    getAgendamentosData(date) {
-      return this.agendamentos.filter(agendamento => agendamento.date === date)
+    async getAgendamentosData(date) {
+      // Esta função agora buscará de todos os usuários, a disponibilidade é global
+      return axios.get(`http://localhost:3001/agendamentos?date=${date}`)
+        .then(response => response.data)
+        .catch(error => {
+          console.error('Erro ao buscar agendamentos por data:', error)
+          return []
+        })
     },
     // Método para buscar agendamentos por período
-    getHorariosDisponiveis(date) {
-      const agendados = this.getAgendamentosData(date)
+    async getHorariosDisponiveis(date) {
+      const agendados = await this.getAgendamentosData(date)
       const todos = []
       
       // Itera sobre os períodos definidos e cria uma lista de horários disponíveis
@@ -52,9 +93,5 @@ export const useAgendamentoStore = defineStore('agendamento', {
       return todos
     },
     
-    saveToLocalStorage() {
-      // Salva os agendamentos no LocalStorage
-      LocalStorage.set('agendamentos', this.agendamentos)
-    }
   }
 })

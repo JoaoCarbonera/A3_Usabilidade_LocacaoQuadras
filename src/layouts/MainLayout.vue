@@ -29,7 +29,7 @@
             <q-icon name="arrow_drop_down" size="16px" />
             <q-menu auto-close>
               <q-list dense>
-                <q-item class="GL__menu-link-signed-in">
+                <q-item class="GL__menu-link-signed-in" v-if="userStore.isLogado">
                   <q-item-section>
                     <div>Logado em <strong>Jorge</strong></div>
                   </q-item-section>

@@ -2,6 +2,10 @@
 <q-page class="q-pa-md">
     <h2 class="text-weight-bolder">Meus Agendamentos</h2>
 
+    <div v-if="loading" class="text-center q-pa-lg">
+      <q-spinner-primary size="3em" />
+    </div>
+
     <q-list bordered separator v-if="agendamentos.length">
       <q-item v-for="agendamento in agendamentos" :key="agendamento.id">
         <q-item-section>
@@ -33,13 +37,17 @@ import { date } from 'quasar'
 export default {
   data() {
     return {
-      agendamentoStore: null
+      agendamentoStore: null,
+      loading: false 
     }
   },
   computed: {
     agendamentos() {
+      if (!this.agendamentoStore) return []
       return [...this.agendamentoStore.agendamentos].sort((a, b) => {
-        return new Date(a.date) - new Date(b.date) || a.hour - b.hour
+        const dateA = new Date(a.date.replace(/\//g, '-'))
+        const dateB = new Date(b.date.replace(/\//g, '-'))
+        return dateA - dateB || a.hour - b.hour
       })
     }
   },
@@ -47,8 +55,8 @@ export default {
     formatDate(d) {
       return date.formatDate(d, 'DD/MM/YYYY')
     },
-    cancelAgendamento(id) {
-      this.agendamentoStore.removeAgendamento(id)
+    async cancelAgendamento(id) {
+      await this.agendamentoStore.removeAgendamento(id)
       this.$q.notify({
         type: 'positive',
         color: 'primary',
@@ -56,8 +64,11 @@ export default {
       })
     }
   },
-  created() {
+  async created() {
     this.agendamentoStore = useAgendamentoStore()
+    this.loading = true
+    await this.agendamentoStore.fetchAgendamentos()
+    this.loading = false
   }
 }
 </script>

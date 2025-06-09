@@ -35,7 +35,7 @@
                   </q-item-section>
                 </q-item>
                 <q-separator  v-if="userStore.isLogado"/>
-                <q-item v-if="!userStore.isLogado" clickable to="/loginPage" class="GL__menu-link">
+                <q-item v-if="!userStore.isLogado" clickable to="/login-page" class="GL__menu-link">
                   <q-item-section>Login</q-item-section>
                 </q-item>
                 <q-item v-if="userStore.isLogado" to="/usuario-agenda" clickable class="GL__menu-link">

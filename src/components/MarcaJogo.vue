@@ -22,9 +22,13 @@
     </div>    
     <div v-if="selectedDate" class="col-12 col-md-6">
       <h3 class="titulo q-mt-none">Horários disponíveis para {{ formata }}</h3>
-      <div class="horarios">
+      <div v-if="loadingHorarios" class="text-center">
+        <q-spinner color="primary" size="40px" />
+        <p>Buscando horários...</p>
+      </div>
+      <div v-else class="horarios">
         <q-card
-          v-for="slot in horariosDisponiveis"
+          v-for="slot in horarios"
           flat
           :key="`${slot.period}-${slot.hour}`"
           class="q-mb-sm text-white horario-cartao"
@@ -35,7 +39,7 @@
               <div class="col-sm-5">{{ slot.hour }}:00 - {{ slot.period }} (R$ {{ slot.price }})</div>
               <div class="col-sm-7 text-right info">
                   <q-btn
-                  v-if="userStore.isLogado"
+                  v-if="slot.available"
                   label="Reservar"
                   color="primary"
                   @click="bookSlot(slot)"
@@ -56,27 +60,70 @@
 <script>
 import { date } from 'quasar'
 import { useAgendamentoStore } from 'src/stores/agendamento'
+import { useUsuarioStore } from 'src/stores/usuario'
+import { useRouter } from 'vue-router'
+
 
 export default {
   data() {
     return {
       selectedDate: null,
       agendamentoStore: null,
+      userStore: null,
+      horarios: [],
+      loadingHorarios: false
     }
   },
   computed: {
     formata() {
+      if (!this.selectedDate) return ''
       return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
     },
-    horariosDisponiveis() {
-      return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
-    },
+  },
+  watch: {
+    // Observar mudanças na data para buscar os horários
+    selectedDate(newDate) {
+      if (newDate) {
+        this.loadHorarios(newDate)
+      }
+    }
   },
   methods: {
+    async loadHorarios(data) {
+      console.log('[COMPONENTE] Carregando horários para a data:', data);
+      this.loadingHorarios = true;
+      this.horarios = []; // Limpa os horários anteriores para evitar mostrar dados antigos
+
+      try {
+        const result = await this.agendamentoStore.getHorariosDisponiveis(data);
+        console.log('[COMPONENTE] Resultado recebido da store:', result);
+        this.horarios = result;
+      } catch (error) {
+        console.error('[COMPONENTE] Erro ao carregar horários:', error);
+        this.$q.notify({
+            type: 'negative',
+            message: 'Falha ao buscar horários. Tente novamente.'
+        });
+      } finally {
+        // O bloco finally garante que o loading será desativado, mesmo se ocorrer um erro
+        this.loadingHorarios = false;
+      }
+    },
+
     dateOptions(d) {
       return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
     },
-    bookSlot(slot) {
+
+    async bookSlot(slot) {
+      if (!this.userStore.isLogado) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Você precisa estar logado para fazer uma reserva.'
+        })
+        this.router.push('/login-page') 
+        return
+      }
+      
       const agendamento = {
         id: Date.now(),
         date: this.selectedDate,
@@ -86,16 +133,24 @@ export default {
         bookedAt: new Date().toISOString(),
       }
 
-      this.agendamentoStore.addAgendamento(agendamento)
+      await this.agendamentoStore.addAgendamento(agendamento)
+
+
       this.$q.notify({
         type: 'positive',
         color: 'primary',
         message: 'Horário reservado com sucesso!',
       })
+
+      // Espere Recarregar os horarios para atualizar os dados
+      await this.loadHorarios(this.selectedDate)
     },
+
   },
   created() {
     this.agendamentoStore = useAgendamentoStore()
+    this.userStore = useUsuarioStore()
+    this.router = useRouter()
   },
 }
 </script>

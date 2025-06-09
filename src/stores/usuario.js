@@ -23,15 +23,18 @@ export const useUsuarioStore = defineStore('user', {
             try {
 
                 // Faz uma requisição GET para o endpoint de login com as credenciais
-                const response = await axios.get(`http://localhost:3001/username${credenciais.username}&password=${credenciais.password}`)
+                const response = await axios.get(`http://localhost:3001/users?username=${credenciais.username}`)
 
                 if (response.data.length > 0) {
 
                     // Se a resposta contiver dados, extrai o usuário e salva no estado e no LocalStorage
                     const user = response.data[0]
-                    this.user = { id: user.id, name: user.name, username: user.username }
-                    localStorage.set('user', this.user)
-                    return true
+                    if (user.password === credenciais.password) {
+                        // Senha correta, login bem-sucedido!
+                        this.user = { id: user.id, name: user.name, username: user.username }
+                        LocalStorage.set('user', this.user)
+                        return true // Retorna sucesso
+                    }
                 }
                 // Se não houver dados, retorna false
                 return false

@@ -64,15 +64,21 @@ export const useAgendamentoStore = defineStore('agendamento', {
     },
     
     // Método para buscar agendamentos por data
+    // Esta função agora buscará de todos os usuários, a disponibilidade é global
     async getAgendamentosData(date) {
-      // Esta função agora buscará de todos os usuários, a disponibilidade é global
-      return axios.get(`http://localhost:3001/agendamentos?date=${date}`)
-        .then(response => response.data)
-        .catch(error => {
-          console.error('Erro ao buscar agendamentos por data:', error)
-          return []
-        })
+    
+      console.log('[STORE] Buscando agendamentos para a data:', date);
+      
+      try {
+        const response = await axios.get(`http://localhost:3001/agendamentos?date=${date}`);
+        console.log('[STORE] Agendamentos encontrados:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Erro ao buscar agendamentos por data:', error);
+        return []; // Retorna um array vazio em caso de erro
+      }
     },
+
     // Método para buscar agendamentos por período
     async getHorariosDisponiveis(date) {
       const agendados = await this.getAgendamentosData(date)
@@ -89,8 +95,8 @@ export const useAgendamentoStore = defineStore('agendamento', {
           })
         }
       }
-      
-      return todos
+      console.log('[STORE] Horários disponíveis retornados para o componente:', todos);
+      return todos;
     },
     
   }

@@ -31,15 +31,6 @@
       "period": "tarde",
       "price": 160,
       "bookedAt": "2025-06-08T11:30:00.000Z"
-    },
-    {
-      "id": 1749507023366,
-      "date": "2025/06/15",
-      "hour": 15,
-      "period": "tarde",
-      "price": 160,
-      "bookedAt": "2025-06-09T22:10:23.366Z",
-      "userId": "1"
     }
   ]
 }

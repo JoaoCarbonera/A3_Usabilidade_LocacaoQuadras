@@ -52,6 +52,38 @@
         </q-card>
       </div>
     </div>
+
+    <div v-if="!selectedDate" class="col-12 col-md-6">
+        <h3 class="titulo q-mt-none">Meus Próximos Agendamentos</h3>
+        <div v-if="loadingAgendamentos" class="text-center">
+            <q-spinner-dots color="primary" size="40px" />
+            <p>Carregando seus agendamentos...</p>
+        </div>
+        <div v-else>
+            <q-list bordered separator v-if="meusAgendamentos.length">
+                <q-item v-for="agendamento in meusAgendamentos" :key="agendamento.id">
+                    <q-item-section>
+                    <q-item-label>{{ formatDate(agendamento.date) }} às {{ agendamento.hour }}:00</q-item-label>
+                    <q-item-label caption>{{ agendamento.period }} - R$ {{ agendamento.price }}</q-item-label>
+                    </q-item-section>
+                    
+                    <q-item-section side>
+                    <q-btn
+                        icon="delete"
+                        color="negative"
+                        flat
+                        round
+                        @click="cancelAgendamento(agendamento.id)"
+                    />
+                    </q-item-section>
+                </q-item>
+            </q-list>
+            <div v-else class="text-grey-7 q-pa-md text-center">
+                Você ainda não possui agendamentos. Selecione uma data no calendário para começar!
+            </div>
+        </div>
+    </div>
+
   </div>
 </div>
 </q-card>
@@ -71,13 +103,23 @@ export default {
       agendamentoStore: null,
       userStore: null,
       horarios: [],
-      loadingHorarios: false
+      loadingHorarios: false,
+      loadingAgendamentos: false
     }
   },
   computed: {
     formata() {
       if (!this.selectedDate) return ''
       return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
+    },
+    meusAgendamentos() {
+        if (!this.agendamentoStore) return []
+        
+        return [...this.agendamentoStore.agendamentos].sort((a, b) => {
+            const dateA = new Date(a.date.replace(/\//g, '-'))
+            const dateB = new Date(b.date.replace(/\//g, '-'))
+            return dateA - dateB || a.hour - b.hour
+        })
     },
   },
   watch: {
@@ -125,7 +167,7 @@ export default {
       }
       
       const agendamento = {
-        id: Date.now(),
+        id: String(Date.now()),
         date: this.selectedDate,
         hour: slot.hour,
         period: slot.period,
@@ -146,13 +188,38 @@ export default {
       await this.loadHorarios(this.selectedDate)
     },
 
+    formatDate(d) {
+      return date.formatDate(d, 'DD/MM/YYYY')
+    },
+
+    async cancelAgendamento(id) {
+      await this.agendamentoStore.removeAgendamento(id)
+      this.$q.notify({
+        type: 'info',
+        message: 'Reserva cancelada.'
+      })
+    },
+
+    async loadMyAgendamentos() {
+        this.loadingAgendamentos = true;
+        try {
+            await this.agendamentoStore.fetchAgendamentos()
+        } catch (error) {
+            console.error('[Component] Erro ao buscar meus agendamentos:', error)
+        } finally {
+            this.loadingAgendamentos = false;
+        }
+    }
+
   },
   created() {
     this.agendamentoStore = useAgendamentoStore()
     this.userStore = useUsuarioStore()
     this.router = useRouter()
+    this.loadMyAgendamentos()
   },
 }
+
 </script>
 
 <style scoped>
@@ -170,7 +237,7 @@ export default {
 }
 
 .titulo {
-  font-size: 48px;
+  font-size: 28px;
   font-weight: bolder;
 }
 

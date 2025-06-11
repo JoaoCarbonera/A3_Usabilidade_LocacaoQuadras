@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useUsuarioStore } from './usuario'
 import axios from 'axios'
+import { date as quasarDate } from 'quasar'
 
 
 export const useAgendamentoStore = defineStore('agendamento', {
@@ -80,18 +81,27 @@ export const useAgendamentoStore = defineStore('agendamento', {
     },
 
     // Método para buscar agendamentos por período
-    async getHorariosDisponiveis(date) {
-      const agendados = await this.getAgendamentosData(date)
+    async getHorariosDisponiveis(selectedDate) {
+      const agendados = await this.getAgendamentosData(selectedDate)
       const todos = []
       
+      const agora = new Date();
+      const hojeString = quasarDate.formatDate(agora, 'YYYY/MM/DD');
+      const horaAtual = agora.getHours();
+
+      const ehHoje = (selectedDate === hojeString);
+
       // Itera sobre os períodos definidos e cria uma lista de horários disponíveis
       for (const [period, details] of Object.entries(this.horarios)) {
         for (let hour = details.start; hour < details.end; hour++) {
+          const jaReservado = agendados.some(a => a.hour === hour && a.period === period);
+          const horarioJaPassou = ehHoje && hour <= horaAtual;
+
           todos.push({
             hour,
             period,
             price: details.price,
-            available: !agendados.some(a => a.hour === hour && a.period === period)
+            available: !jaReservado && !horarioJaPassou
           })
         }
       }

@@ -12,7 +12,8 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "postinstall": "quasar prepare"
+    "postinstall": "quasar prepare",
+    "json-server": "json-server --watch banco.json --port 3001"
   },
   "dependencies": {
     "axios": "^1.2.1",

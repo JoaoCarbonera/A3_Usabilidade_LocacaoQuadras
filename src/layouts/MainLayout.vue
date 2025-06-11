@@ -29,20 +29,20 @@
             <q-icon name="arrow_drop_down" size="16px" />
             <q-menu auto-close>
               <q-list dense>
-                <q-item class="GL__menu-link-signed-in">
+                <q-item class="GL__menu-link-signed-in" v-if="userStore.isLogado">
                   <q-item-section>
-                    <div>Logado em <strong>Jorge</strong></div>
+                    <div>Logado em <strong>{{ userName }}</strong></div>
                   </q-item-section>
                 </q-item>
-                <q-separator />
-                <q-item clickable class="GL__menu-link">
-                  <q-item-section>Seu Perfil</q-item-section>
+                <q-separator  v-if="userStore.isLogado"/>
+                <q-item v-if="!userStore.isLogado" clickable to="/login-page" class="GL__menu-link">
+                  <q-item-section>Login</q-item-section>
                 </q-item>
-                <q-item to="/usuario-agenda" clickable class="GL__menu-link">
+                <q-item v-if="userStore.isLogado" to="/usuario-agenda" clickable class="GL__menu-link">
                   <q-item-section>Meus Agendamentos</q-item-section>
                 </q-item>
-                <q-separator />
-                <q-item clickable class="GL__menu-link">
+                <q-separator v-if="userStore.isLogado" />
+                <q-item v-if="userStore.isLogado" clickable @click="logout" class="GL__menu-link">
                   <q-item-section>Log out</q-item-section>
                 </q-item>
               </q-list>
@@ -91,16 +91,37 @@
 </template>
 
 <script>
+import { useUsuarioStore } from 'src/stores/usuario';
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'MyLayout',
   setup() {
-    const drawer = ref(false)
+    const userStore = useUsuarioStore()
+    const router = useRouter()
+
     return {
-      drawer
+      drawer: ref(false),
+      userStore,
+      router
+    }
+  },
+  computed: {
+    isLogado() {
+      return this.userStore.isLogado
+    },
+    userName() {
+      return this.userStore.userName
+    }
+  },
+  methods: {
+    logout() {
+      this.userStore.logout()
+      this.router.push('/login-page')
     }
   }
+
 }
 </script>
 

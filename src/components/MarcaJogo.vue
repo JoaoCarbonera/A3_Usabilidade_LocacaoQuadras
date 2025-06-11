@@ -22,9 +22,13 @@
     </div>    
     <div v-if="selectedDate" class="col-12 col-md-6">
       <h3 class="titulo q-mt-none">Horários disponíveis para {{ formata }}</h3>
-      <div class="horarios">
+      <div v-if="loadingHorarios" class="text-center">
+        <q-spinner color="primary" size="40px" />
+        <p>Buscando horários...</p>
+      </div>
+      <div v-else class="horarios">
         <q-card
-          v-for="slot in horariosDisponiveis"
+          v-for="slot in horarios"
           flat
           :key="`${slot.period}-${slot.hour}`"
           class="q-mb-sm text-white horario-cartao"
@@ -48,6 +52,38 @@
         </q-card>
       </div>
     </div>
+
+    <div v-if="!selectedDate" class="col-12 col-md-6">
+        <h3 class="titulo q-mt-none">Meus Próximos Agendamentos</h3>
+        <div v-if="loadingAgendamentos" class="text-center">
+            <q-spinner-dots color="primary" size="40px" />
+            <p>Carregando seus agendamentos...</p>
+        </div>
+        <div v-else>
+            <q-list bordered separator v-if="meusAgendamentos.length">
+                <q-item v-for="agendamento in meusAgendamentos" :key="agendamento.id">
+                    <q-item-section>
+                    <q-item-label>{{ formatDate(agendamento.date) }} às {{ agendamento.hour }}:00</q-item-label>
+                    <q-item-label caption>{{ agendamento.period }} - R$ {{ agendamento.price }}</q-item-label>
+                    </q-item-section>
+                    
+                    <q-item-section side>
+                    <q-btn
+                        icon="delete"
+                        color="negative"
+                        flat
+                        round
+                        @click="cancelAgendamento(agendamento.id)"
+                    />
+                    </q-item-section>
+                </q-item>
+            </q-list>
+            <div v-else class="text-grey-7 q-pa-md text-center">
+                Você ainda não possui agendamentos. Selecione uma data no calendário para começar!
+            </div>
+        </div>
+    </div>
+
   </div>
 </div>
 </q-card>
@@ -56,29 +92,82 @@
 <script>
 import { date } from 'quasar'
 import { useAgendamentoStore } from 'src/stores/agendamento'
+import { useUsuarioStore } from 'src/stores/usuario'
+import { useRouter } from 'vue-router'
+
 
 export default {
   data() {
     return {
       selectedDate: null,
       agendamentoStore: null,
+      userStore: null,
+      horarios: [],
+      loadingHorarios: false,
+      loadingAgendamentos: false
     }
   },
   computed: {
     formata() {
+      if (!this.selectedDate) return ''
       return date.formatDate(this.selectedDate, 'DD/MM/YYYY')
     },
-    horariosDisponiveis() {
-      return this.agendamentoStore.getHorariosDisponiveis(this.selectedDate)
+    meusAgendamentos() {
+        if (!this.agendamentoStore) return []
+        
+        return [...this.agendamentoStore.agendamentos].sort((a, b) => {
+            const dateA = new Date(a.date.replace(/\//g, '-'))
+            const dateB = new Date(b.date.replace(/\//g, '-'))
+            return dateA - dateB || a.hour - b.hour
+        })
     },
   },
+  watch: {
+    // Observar mudanças na data para buscar os horários
+    selectedDate(newDate) {
+      if (newDate) {
+        this.loadHorarios(newDate)
+      }
+    }
+  },
   methods: {
+    async loadHorarios(data) {
+      console.log('[COMPONENTE] Carregando horários para a data:', data);
+      this.loadingHorarios = true;
+      this.horarios = []; // Limpa os horários anteriores para evitar mostrar dados antigos
+
+      try {
+        const result = await this.agendamentoStore.getHorariosDisponiveis(data);
+        console.log('[COMPONENTE] Resultado recebido da store:', result);
+        this.horarios = result;
+      } catch (error) {
+        console.error('[COMPONENTE] Erro ao carregar horários:', error);
+        this.$q.notify({
+            type: 'negative',
+            message: 'Falha ao buscar horários. Tente novamente.'
+        });
+      } finally {
+        // O bloco finally garante que o loading será desativado, mesmo se ocorrer um erro
+        this.loadingHorarios = false;
+      }
+    },
+
     dateOptions(d) {
       return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
     },
-    bookSlot(slot) {
+
+    async bookSlot(slot) {
+      if (!this.userStore.isLogado) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Você precisa estar logado para fazer uma reserva.'
+        })
+        this.router.push('/login-page') 
+        return
+      }
+      
       const agendamento = {
-        id: Date.now(),
+        id: String(Date.now()),
         date: this.selectedDate,
         hour: slot.hour,
         period: slot.period,
@@ -86,18 +175,51 @@ export default {
         bookedAt: new Date().toISOString(),
       }
 
-      this.agendamentoStore.addAgendamento(agendamento)
+      await this.agendamentoStore.addAgendamento(agendamento)
+
+
       this.$q.notify({
         type: 'positive',
         color: 'primary',
         message: 'Horário reservado com sucesso!',
       })
+
+      // Espere Recarregar os horarios para atualizar os dados
+      await this.loadHorarios(this.selectedDate)
     },
+
+    formatDate(d) {
+      return date.formatDate(d, 'DD/MM/YYYY')
+    },
+
+    async cancelAgendamento(id) {
+      await this.agendamentoStore.removeAgendamento(id)
+      this.$q.notify({
+        type: 'info',
+        message: 'Reserva cancelada.'
+      })
+    },
+
+    async loadMyAgendamentos() {
+        this.loadingAgendamentos = true;
+        try {
+            await this.agendamentoStore.fetchAgendamentos()
+        } catch (error) {
+            console.error('[Component] Erro ao buscar meus agendamentos:', error)
+        } finally {
+            this.loadingAgendamentos = false;
+        }
+    }
+
   },
   created() {
     this.agendamentoStore = useAgendamentoStore()
+    this.userStore = useUsuarioStore()
+    this.router = useRouter()
+    this.loadMyAgendamentos()
   },
 }
+
 </script>
 
 <style scoped>
@@ -115,7 +237,7 @@ export default {
 }
 
 .titulo {
-  font-size: 48px;
+  font-size: 28px;
   font-weight: bolder;
 }
 

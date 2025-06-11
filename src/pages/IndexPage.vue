@@ -17,7 +17,7 @@
       @click="showMarcar = true"
     />
 
-    <q-dialog v-model="showMarcar" backdrop-filter="blur(4px)" transition-show="slide-up" transition-hide="slide-down">
+    <q-dialog v-model="showMarcar" transition-show="slide-up" transition-hide="slide-down">
       <MarcaJogo @close="showMarcar = false" />
     </q-dialog>
   </div>
@@ -77,18 +77,17 @@
 </template>
 
 <script>
-import MarcaJogo from 'src/components/MarcaJogo.vue'
+import { defineAsyncComponent } from 'vue'
 
 export default {
   name: 'IndexPage',
   components: {
-    MarcaJogo,
+    MarcaJogo: defineAsyncComponent(() => import('src/components/MarcaJogo.vue')),
   },
   data() {
     return {
       slide: 1,
       showMarcar: false,
-      maximizedToggle: false,
     }
   },
 }

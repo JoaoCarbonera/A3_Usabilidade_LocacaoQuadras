@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
-import { LocalStorage } from 'quasar'
+import { useUsuarioStore } from './usuario'
+import axios from 'axios'
+import { date as quasarDate } from 'quasar'
 
 
 export const useAgendamentoStore = defineStore('agendamento', {
   // Define o estado inicial do store
   state: () => ({
 
-    // Busca no LocalStorage por agendamentos salvos ou inicia com um array vazio
-    agendamentos: LocalStorage.getItem('agendamentos') || [],
+    agendamentos: [],
 
     // Define os horários disponíveis para agendamento
     horarios: {
@@ -18,43 +19,95 @@ export const useAgendamentoStore = defineStore('agendamento', {
   }),
 
   actions: {
+    async fetchAgendamentos() {
+      const userStore = useUsuarioStore()
+      if (!userStore.isLogado) {
+        this.agendamentos = []
+        return
+      }
+      try {
+        const response = await axios.get(`http://localhost:3001/agendamentos?userId=${userStore.user.id}`)
+        this.agendamentos = response.data
+      } catch (error) {
+        console.error('Erro ao buscar agendamentos:', error)
+      }
+    },
+  
     // Método para adicionar um agendamento
-    addAgendamento(agendamento) {
-      this.agendamentos.push(agendamento)
-      this.saveToLocalStorage()
+    async addAgendamento(agendamento) {
+      const userStore = useUsuarioStore()
+
+      if (!userStore.isLogado) return;
+
+      const newAgendamento = { ...agendamento, userId: userStore.user.id }
+      try {
+        const response = await axios.post('http://localhost:3001/agendamentos', newAgendamento)
+        this.agendamentos.push(response.data)
+        
+      } catch (error) {
+        console.error('Erro ao adicionar agendamento:', error)
+
+      }
     },
+
     // Método para atualizar um agendamento
-    removeAgendamento(agendamentoId) {
-      this.agendamentos = this.agendamentos.filter(a => a.id !== agendamentoId)
-      this.saveToLocalStorage()
+    async removeAgendamento(agendamentoId) {
+      
+      try {
+        await axios.delete(`http://localhost:3001/agendamentos/${agendamentoId}`)
+
+        this.agendamentos = this.agendamentos.filter(a => a.id !== agendamentoId)
+
+      } catch (error) {
+        console.error('Erro ao cancelar agendamento:', error)
+
+      }
     },
+    
     // Método para buscar agendamentos por data
-    getAgendamentosData(date) {
-      return this.agendamentos.filter(agendamento => agendamento.date === date)
+    // Esta função agora buscará de todos os usuários, a disponibilidade é global
+    async getAgendamentosData(date) {
+    
+      console.log('[STORE] Buscando agendamentos para a data:', date);
+      
+      try {
+        const response = await axios.get(`http://localhost:3001/agendamentos?date=${date}`);
+        console.log('[STORE] Agendamentos encontrados:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Erro ao buscar agendamentos por data:', error);
+        return []; // Retorna um array vazio em caso de erro
+      }
     },
+
     // Método para buscar agendamentos por período
-    getHorariosDisponiveis(date) {
-      const agendados = this.getAgendamentosData(date)
+    async getHorariosDisponiveis(selectedDate) {
+      const agendados = await this.getAgendamentosData(selectedDate)
       const todos = []
       
+      const agora = new Date();
+      const hojeString = quasarDate.formatDate(agora, 'YYYY/MM/DD');
+      const horaAtual = agora.getHours();
+
+      const ehHoje = (selectedDate === hojeString);
+
       // Itera sobre os períodos definidos e cria uma lista de horários disponíveis
       for (const [period, details] of Object.entries(this.horarios)) {
         for (let hour = details.start; hour < details.end; hour++) {
+          const jaReservado = agendados.some(a => a.hour === hour && a.period === period);
+          const horarioJaPassou = ehHoje && hour <= horaAtual;
+
           todos.push({
             hour,
             period,
             price: details.price,
-            available: !agendados.some(a => a.hour === hour && a.period === period)
+            available: !jaReservado && !horarioJaPassou
           })
         }
       }
-      
-      return todos
+      console.log('[STORE] Horários disponíveis retornados para o componente:', todos);
+      return todos;
     },
     
-    saveToLocalStorage() {
-      // Salva os agendamentos no LocalStorage
-      LocalStorage.set('agendamentos', this.agendamentos)
-    }
   }
 })

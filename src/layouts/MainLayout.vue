@@ -10,7 +10,7 @@
         <div
           v-if="$q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-subtitle2 text-weight-bolder row items-center no-wrap">
-          <router-link to="/login-page" class="text-white">Marcar Horário</router-link>
+          <a @click="showMarcar = true" style="cursor: pointer;">Marcar Horário</a>
           <router-link to="/quadras-page" class="text-white">Quadras</router-link>
           <router-link to="/contato-page" class="text-white">Contato</router-link>
           <router-link to="/sobre-page" class="text-white">Sobre Nós</router-link>
@@ -87,6 +87,10 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-dialog v-model="showMarcar" transition-show="slide-up" transition-hide="slide-down">
+      <MarcaJogo @close="showMarcar = false" />
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -94,9 +98,18 @@
 import { useUsuarioStore } from 'src/stores/usuario';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
+import MarcaJogo from 'src/components/MarcaJogo.vue'
 
 export default {
   name: 'MyLayout',
+  components: {
+    MarcaJogo,
+  },
+  data() {
+    return {
+      showMarcar: false,
+    }
+  },
   setup() {
     const userStore = useUsuarioStore()
     const router = useRouter()

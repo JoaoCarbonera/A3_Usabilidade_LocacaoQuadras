@@ -97,6 +97,7 @@ import { useRouter } from 'vue-router'
 
 
 export default {
+  name: 'MarcaJogo',
   data() {
     return {
       selectedDate: null,
